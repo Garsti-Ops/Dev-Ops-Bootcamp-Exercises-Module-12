@@ -1,0 +1,11 @@
+architecture: replication
+auth:
+  rootPassword: root
+  database: myapp
+  username: root
+  password: root
+
+secondary:
+  replicaCount: 2
+  persistence:
+    storageClass: standard
