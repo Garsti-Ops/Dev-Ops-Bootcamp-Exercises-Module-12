@@ -1,9 +1,19 @@
-provider "kubernetes" {
-  config_path    = "~/.kube/config"
-  config_context = "my-context"
+data "aws_eks_cluster" "eks-cluster" {
+  name = module.eks.cluster_id
 }
 
-resource "kubernetes_namespace" "example" {
+data "aws_eks_cluster_auth" "eks-cluster" {
+  name = module.eks.cluster_id
+}
+
+
+provider "kubernetes" {
+  host                   = data.aws_eks_cluster.eks-cluster.endpoint
+  token                  = data.aws_eks_cluster_auth.eks-cluster.token
+  cluster_ca_certificate = base64decode(data.aws_eks_cluster.eks-cluster.certificate_authority.0.data)
+}
+
+resource "kubernetes_namespace" "myapp" {
   metadata {
     name = "myapp"
   }
@@ -11,7 +21,9 @@ resource "kubernetes_namespace" "example" {
 
 provider "helm" {
   kubernetes {
-    config_path = "~/.kube/config"
+    host                   = data.aws_eks_cluster.eks-cluster.endpoint
+    token                  = data.aws_eks_cluster_auth.eks-cluster.token
+    cluster_ca_certificate = base64decode(data.aws_eks_cluster.eks-cluster.certificate_authority.0.data)
   }
 }
 
