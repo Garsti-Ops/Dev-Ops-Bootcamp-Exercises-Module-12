@@ -15,11 +15,11 @@ provider "helm" {
   }
 }
 
-resource "helm_release" "nginx_ingress" {
-  name       = "nginx-ingress-controller"
-
+resource "helm_release" "mysql_database" {
+  name       = "mysql"
   repository = "oci://registry-1.docker.io/bitnamicharts/mysql"
   chart      = "mysql"
+  version    = "8.8.6"
 
   values = [
     "${file("mysql-values.yaml")}"
